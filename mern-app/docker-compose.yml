@@ -1,0 +1,73 @@
+# docker-compose.yml - run MongoDB, the Express API and the React UI with ONE command:
+#     docker compose up --build
+# Then open http://localhost:3000.
+#
+# Only want the database for local development? Run:
+#     docker compose up -d mongo
+
+services:
+  # ---------------- MongoDB database ----------------
+  mongo:
+    # Official MongoDB image, major version 8.
+    image: mongo:8
+    # Expose MongoDB on your machine too (for `npm run dev` and tools like MongoDB Compass).
+    ports:
+      - "27017:27017"
+    # Keep the data in a named volume so it survives container restarts.
+    volumes:
+      - mongo-data:/data/db
+    # Docker runs this to know when MongoDB is ready to accept connections.
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      # Check every 10 seconds, allow 5 seconds per check, give up after 5 failures.
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      # Grace period while MongoDB starts for the first time.
+      start_period: 20s
+    # Restart automatically if it crashes.
+    restart: unless-stopped
+
+  # ---------------- Express API ----------------
+  backend:
+    # Build the image from backend/Dockerfile.
+    build: ./backend
+    # Settings (see backend/.env.example). "mongo" is the service name above.
+    environment:
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo:27017/mern_tasks
+      CLIENT_ORIGIN: http://localhost:3000
+    # Expose the API directly too (handy for curl or Postman).
+    ports:
+      - "4000:4000"
+    # Start only after MongoDB reports healthy.
+    depends_on:
+      mongo:
+        condition: service_healthy
+    # The health endpoint returns 200 only when the database is connected.
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    # Restart automatically if it crashes.
+    restart: unless-stopped
+
+  # ---------------- React UI served by nginx ----------------
+  frontend:
+    # Build the image from frontend/Dockerfile.
+    build: ./frontend
+    # Map port 3000 on your machine to nginx's port 80.
+    ports:
+      - "3000:80"
+    # Start only after the backend reports healthy.
+    depends_on:
+      backend:
+        condition: service_healthy
+    # Restart automatically if it crashes.
+    restart: unless-stopped
+
+# Named volume managed by Docker (survives `docker compose down`; removed with `down -v`).
+volumes:
+  mongo-data:

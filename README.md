@@ -214,3 +214,9 @@ The tests use the offline `hash` embedder and a fake LLM. They need no API key, 
 | "No text could be extracted" | The PDF is a scanned image. Run OCR first (e.g. `ocrmypdf`) |
 | Startup error about a different embedder | You changed embedding provider/model. Delete `backend/data/` and re-upload |
 | Answers stream all at once behind a proxy | Disable response buffering for `/api/chat` (see `frontend/nginx.conf`) |
+
+---
+
+## Also in this repository
+
+[`mern-app/`](mern-app) is a separate, basic full-stack to-do app built on the MERN stack (MongoDB, Express, React, Node.js). It doesn't share any code with KnowRAG. See [mern-app/README.md](mern-app/README.md) to run it.

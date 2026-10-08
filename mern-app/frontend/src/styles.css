@@ -1,0 +1,314 @@
+/* styles.css - all styling for the app. Plain CSS, no framework. */
+
+/* ---------- Design tokens: colours and sizes reused everywhere ---------- */
+:root {
+  /* Page and surface colours (light mode). */
+  --bg: #f4f6f5;
+  --surface: #ffffff;
+  --surface-2: #eef2f0;
+  /* Text colours: primary and secondary. */
+  --text: #17211c;
+  --muted: #5f6b65;
+  /* Borders and the accent (brand) colour: MongoDB-style green. */
+  --border: #dbe2de;
+  --accent: #15803d;
+  --accent-contrast: #ffffff;
+  /* Status colours. */
+  --danger: #b42318;
+  --danger-bg: #fdecea;
+  /* Shape and typography. */
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Let built-in controls (checkboxes, scrollbars) match the theme. */
+  color-scheme: light;
+}
+
+/* Dark mode: same tokens, darker values, applied when the OS prefers dark. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1311;
+    --surface: #161d1a;
+    --surface-2: #1e2723;
+    --text: #e5ece8;
+    --muted: #97a39d;
+    --border: #2a3530;
+    --accent: #4ade80;
+    --accent-contrast: #0e1311;
+    --danger: #ff9b91;
+    --danger-bg: #3a1c1a;
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Base elements ---------- */
+
+/* Include padding and borders in element widths (easier sizing). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Page background, font and colour. */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.5;
+}
+
+/* Inputs and buttons don't inherit the page font by default. */
+input,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Layout ---------- */
+
+/* Centre a column of content with a 16px gutter on small screens. */
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+/* Title block above the card. */
+.app-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* The white box holding the form, list and footer. */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+  overflow: hidden;
+}
+
+/* ---------- Buttons ---------- */
+
+/* Primary button: filled with the accent colour. */
+button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Brighten buttons slightly on hover. */
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* Disabled buttons look inactive. */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Quiet button: outlined instead of filled. */
+button.secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Destructive button: red text. */
+button.danger {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--danger);
+  font-weight: 500;
+}
+
+/* Icon-only button (the × that closes the error banner). */
+button.icon {
+  background: transparent;
+  color: inherit;
+  padding: 0 6px;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Visible focus ring for keyboard users. */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Forms ---------- */
+
+/* New-task form and edit form: input grows, buttons stay their natural size. */
+.task-form,
+.edit-form {
+  display: flex;
+  gap: 8px;
+}
+
+.task-form {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Text inputs fill the remaining width. min-width: 0 lets them shrink on phones. */
+.task-form input,
+.edit-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+/* The edit form takes the full width of its row. */
+.edit-form {
+  flex: 1;
+}
+
+/* ---------- Messages ---------- */
+
+/* Red banner for API errors. */
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 12px 16px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* "Loading…" and "No tasks yet" text. */
+.empty {
+  margin: 0;
+  padding: 32px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- Task list ---------- */
+
+/* Remove the default bullets and indentation. */
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* One row: checkbox + title on the left, buttons on the right. */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Checkbox and title; takes all the free space. */
+.task-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Bigger checkbox in the accent colour. */
+.task-check input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+/* Long titles wrap instead of overflowing the card. */
+.task-title {
+  overflow-wrap: anywhere;
+}
+
+/* Completed tasks: struck through and dimmed. */
+.task-item.done .task-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+/* Edit and Delete buttons. */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.task-actions button {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Footer ---------- */
+
+/* Counter on the left, filters on the right; wraps on narrow screens. */
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Filter buttons sit in a row. */
+.filters {
+  display: flex;
+  gap: 4px;
+}
+
+/* Inactive filter: plain text. "capitalize" turns "all" into "All". */
+.filters button {
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 10px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Selected filter: outlined in the accent colour. */
+.filters button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Small screens ---------- */
+
+/* Less empty space at the top on phones. */
+@media (max-width: 480px) {
+  .app {
+    padding-top: 24px;
+  }
+}

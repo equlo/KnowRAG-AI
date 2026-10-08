@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- index.html - the single HTML page that hosts the React application. -->
+<html lang="en">
+  <head>
+    <!-- Use UTF-8 so every language and emoji renders correctly. -->
+    <meta charset="UTF-8" />
+    <!-- Make the layout scale properly on phones. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Browser-tab icon: an inline SVG check mark, so no image file is needed. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2316a34a'/%3E%3Cpath d='M9 16.5l5 5 9-11' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <!-- Text shown in the browser tab. -->
+    <title>MERN Tasks</title>
+  </head>
+  <body>
+    <!-- React renders the whole UI inside this empty div. -->
+    <div id="root"></div>
+    <!-- Load our JavaScript entry point as an ES module; Vite bundles it for production. -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
