@@ -1,0 +1,55 @@
+# docker-compose.yml - run the whole stack with ONE command:
+#     cp backend/.env.example backend/.env   # then put your API key in it
+#     docker compose up --build
+# Open http://localhost:8080 for the app and http://localhost:8000/docs for the API docs.
+
+services:
+  # ---------------- FastAPI backend (RAG engine + Claude) ----------------
+  backend:
+    # Build the image from backend/Dockerfile.
+    build: ./backend
+    # Load ANTHROPIC_API_KEY and KNOWRAG_* settings from backend/.env.
+    env_file: ./backend/.env
+    # Values here override the .env file for the container setup.
+    environment:
+      # Keep the database and model cache on the named volume below.
+      KNOWRAG_DATA_DIR: /data
+      # The browser talks to nginx on port 8080, so allow that origin.
+      KNOWRAG_CORS_ORIGINS: http://localhost:8080
+    # Expose the API directly too (useful for http://localhost:8000/docs).
+    ports:
+      - "8000:8000"
+    # Persist documents, vectors and the downloaded embedding model across restarts.
+    volumes:
+      - knowrag-data:/data
+    # Docker checks this command to know when the backend is ready.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      # Check every 10 seconds...
+      interval: 10s
+      # ...allowing up to 5 seconds per check...
+      timeout: 5s
+      # ...and 2 minutes at startup for the first model download.
+      start_period: 120s
+      # Mark unhealthy after 5 failures in a row.
+      retries: 5
+    # Restart automatically if the process crashes.
+    restart: unless-stopped
+
+  # ---------------- React frontend served by nginx ----------------
+  frontend:
+    # Build the image from frontend/Dockerfile.
+    build: ./frontend
+    # Map port 8080 on your machine to nginx's port 80.
+    ports:
+      - "8080:80"
+    # Start only after the backend reports healthy.
+    depends_on:
+      backend:
+        condition: service_healthy
+    # Restart automatically if it crashes.
+    restart: unless-stopped
+
+# Named volume managed by Docker (survives `docker compose down`; removed with `down -v`).
+volumes:
+  knowrag-data:

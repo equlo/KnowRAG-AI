@@ -1,0 +1,22 @@
+# Secrets - never commit API keys.
+.env
+
+# Backend runtime data: SQLite database and downloaded embedding models.
+backend/data/
+data/
+
+# Python caches and virtual environments.
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Frontend dependencies and build output.
+node_modules/
+dist/
+
+# Editor and OS clutter.
+.vscode/
+.idea/
+.DS_Store

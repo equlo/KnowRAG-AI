@@ -1,0 +1,11 @@
+# Files Docker should NOT copy into the image build context.
+# Local database and downloaded models (they live in a volume instead).
+data/
+# Secrets must never be baked into an image; compose passes them at runtime.
+.env
+# Python caches and virtual environments.
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/

@@ -1,0 +1,485 @@
+/* styles.css - all styling for the app. Plain CSS, no framework. */
+
+/* ---------- Design tokens: colours and sizes reused everywhere ---------- */
+:root {
+  /* Page and surface colours (light mode). */
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  /* Text colours: primary and secondary. */
+  --text: #1c2230;
+  --muted: #646d7e;
+  /* Borders and the accent (brand) colour. */
+  --border: #dfe3ea;
+  --accent: #4f46e5;
+  --accent-contrast: #ffffff;
+  /* Status colours. */
+  --danger-bg: #fdecec;
+  --danger-text: #a12424;
+  --ok: #16a34a;
+  /* Shape and typography. */
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Let built-in controls (scrollbars, inputs) match the theme. */
+  color-scheme: light;
+}
+
+/* Dark mode: same tokens, darker values, applied when the OS prefers dark. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1218;
+    --surface: #171b23;
+    --surface-2: #1f2430;
+    --text: #e6e9ef;
+    --muted: #9aa3b2;
+    --border: #2a3040;
+    --accent: #818cf8;
+    --accent-contrast: #0f1218;
+    --danger-bg: #3a1a1d;
+    --danger-text: #ffb4b4;
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Base elements ---------- */
+
+/* Include padding and border in element sizes (much easier layouts). */
+* {
+  box-sizing: border-box;
+}
+
+/* The page itself fills the window and uses our font and colours. */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ---------- App shell: header on top, two columns below ---------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* The square "K" logo. */
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.tagline {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+/* Model badge with a green "online" dot. */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+/* Sidebar (fixed width) + chat (fills the rest). min-height: 0 lets children scroll. */
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  min-height: 0;
+}
+
+/* ---------- Document panel ---------- */
+.documents-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+}
+.documents-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+/* Dashed drop area that highlights while a file is dragged over it. */
+.dropzone {
+  padding: 20px 12px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dropzone:hover,
+.dropzone:focus-visible,
+.dropzone.dragging {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  outline: none;
+}
+.document-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.document-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-radius: 8px;
+}
+/* min-width: 0 allows long file names to be truncated with "…". */
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.doc-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.doc-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ---------- Chat panel ---------- */
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+}
+/* The scrolling message list. */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.empty-state {
+  margin: auto;
+  max-width: 520px;
+  text-align: center;
+}
+.empty-state h2 {
+  margin-bottom: 4px;
+}
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* User messages on the right, assistant messages on the left. */
+.message {
+  display: flex;
+}
+.message.user {
+  justify-content: flex-end;
+}
+.bubble {
+  max-width: min(760px, 90%);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow-wrap: anywhere;
+}
+.message.user .bubble {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+/* Keep the user's line breaks. */
+.user-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+/* Tidy spacing for Markdown inside answers. */
+.bubble > :first-child {
+  margin-top: 0;
+}
+.bubble > p:last-of-type {
+  margin-bottom: 0;
+}
+.bubble pre {
+  overflow-x: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+.bubble table {
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.bubble th,
+.bubble td {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+}
+
+/* Three bouncing dots while waiting for the first token. */
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.typing span:last-child {
+  margin-left: 6px;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.notice {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.meta {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* ---------- Sources ---------- */
+.sources {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.sources > summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 500;
+}
+.sources ol {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sources li summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  cursor: pointer;
+}
+.source-number {
+  font-weight: 700;
+  color: var(--accent);
+}
+.source-file {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.source-score {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.sources blockquote {
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  white-space: pre-wrap;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* ---------- Composer (input area) ---------- */
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.composer textarea {
+  flex: 1;
+  resize: none;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.composer textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* ---------- Buttons, chips, banners ---------- */
+.button {
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.button.secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.chip {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.icon-button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.icon-button:hover {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+.banner {
+  margin: 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+.banner.error {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+.banner.small {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 0.8rem;
+}
+
+/* ---------- Phones and narrow windows: stack the two panels ---------- */
+@media (max-width: 800px) {
+  .app {
+    height: auto;
+    min-height: 100%;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 12px 16px;
+  }
+  .documents-panel {
+    max-height: 40vh;
+  }
+  .chat-panel {
+    min-height: 70vh;
+  }
+  .tagline {
+    display: none;
+  }
+}

@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------
+# Python dependencies for the KnowRAG-AI backend.
+# Install with:  pip install -r requirements.txt
+# Each line names one package plus the lowest version we tested against.
+# ---------------------------------------------------------------------------
+
+# FastAPI: the web framework that turns our Python functions into HTTP endpoints.
+fastapi>=0.115
+# Uvicorn: the ASGI server that actually listens on a port and runs FastAPI.
+# The [standard] extra adds faster event-loop and HTTP parsing libraries.
+uvicorn[standard]>=0.30
+# Anthropic's official Python SDK, used to call Claude (the "generative" part of RAG).
+anthropic>=1.0
+# pydantic-settings: reads configuration from environment variables / a .env file.
+pydantic-settings>=2.4
+# python-multipart: lets FastAPI parse file uploads (multipart/form-data requests).
+python-multipart>=0.0.9
+# pypdf: extracts text from PDF files, page by page.
+pypdf>=5.0
+# python-docx: extracts text from Microsoft Word (.docx) files.
+python-docx>=1.1
+# NumPy: fast vector math, used for cosine-similarity search over embeddings.
+numpy>=1.26
+# FastEmbed: runs a small open-source embedding model locally on the CPU (no GPU, no API key).
+fastembed>=0.4
+
+# --- Development / testing only ---
+# pytest: the test runner used in backend/tests.
+pytest>=8.0
+# httpx: required by FastAPI's TestClient to send fake HTTP requests in tests.
+httpx>=0.27
