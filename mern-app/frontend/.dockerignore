@@ -1,0 +1,5 @@
+# Files Docker should NOT copy into the build context.
+# Dependencies are installed fresh inside the image with `npm ci`.
+node_modules/
+# Build output is regenerated inside the image.
+dist/
