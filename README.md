@@ -130,7 +130,7 @@ KnowRAG-AI/
 │   ├── vite.config.js
 │   ├── nginx.conf               Production server config (SSE-friendly)
 │   └── Dockerfile
-├── docs/                        Concept guide + file-by-file walkthroughs
+├── docs/                        Concept guide, file-by-file walkthroughs, interview guide
 └── docker-compose.yml
 ```
 
@@ -189,6 +189,7 @@ Every source file is commented line by line. A good reading order:
 2. Backend, in data-flow order: `config.py` → `rag/loaders.py` → `rag/chunker.py` → `rag/embeddings.py` → `rag/vector_store.py` → `rag/prompts.py` → `rag/llm.py` → `rag/pipeline.py` → `api/*.py` → `main.py`. The companion guide is [docs/02-backend-walkthrough.md](docs/02-backend-walkthrough.md).
 3. Frontend: `api.js` → `App.jsx` → `ChatPanel.jsx` → `Message.jsx` / `SourceList.jsx` / `DocumentPanel.jsx`. The companion guide is [docs/03-frontend-walkthrough.md](docs/03-frontend-walkthrough.md).
 4. [docs/04-deployment-and-extending.md](docs/04-deployment-and-extending.md): Docker, production hardening, and ideas for next steps.
+5. [docs/05-interview-guide.md](docs/05-interview-guide.md): presenting the project in interviews. Elevator pitches, request traces, design tradeoffs, challenges, a question bank with model answers, and a demo script.
 
 ---
 

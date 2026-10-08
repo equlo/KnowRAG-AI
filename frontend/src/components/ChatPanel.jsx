@@ -67,7 +67,7 @@ export default function ChatPanel({ hasDocuments }) {
       // `sources: null` means "still searching"; `status` tracks streaming.
       { id: assistantId, role: "assistant", content: "", sources: null, notices: [], status: "streaming" },
     ]);
-    // Lock the input.
+    // Block new submissions (Send becomes Stop); the textarea stays editable.
     setBusy(true);
     // Create a controller so the request can be cancelled.
     const controller = new AbortController();
@@ -95,7 +95,7 @@ export default function ChatPanel({ hasDocuments }) {
     } finally {
       // Whatever happened, the message is no longer streaming...
       updateMessage(assistantId, { status: "complete" });
-      // ...the input unlocks...
+      // ...submitting is allowed again (Stop turns back into Send)...
       setBusy(false);
       // ...and there is nothing left to cancel.
       abortRef.current = null;

@@ -93,7 +93,7 @@ After this, every vector has length 1, so a **dot product equals cosine similari
 ### `FastEmbedEmbedder`
 - `from fastembed import TextEmbedding` is imported **inside** `__init__`, so the `hash` provider works even where fastembed isn't installed.
 - `cache_dir=<data_dir>/models` keeps the downloaded model next to the database. In Docker that is a persistent volume, so the model downloads once.
-- `passage_embed()` vs `query_embed()`: BGE models were trained with a special instruction prefix for *queries* ("Represent this sentence for searching relevant passages: "). FastEmbed adds it for us. Using the right method measurably improves retrieval.
+- `passage_embed()` vs `query_embed()`: these are FastEmbed's hooks for models that need different prefixes for documents and queries. For `bge-small-en-v1.5` both are a plain `embed()` call: BGE v1.5's optional query instruction ("Represent this sentence for searching relevant passages: ") is **not** added, so a query is embedded exactly like a passage. Calling the right hook keeps the code correct if you switch to a model that does use prefixes. Prepending the instruction yourself is a cheap experiment to measure with a recall@k eval.
 - `np.asarray(..., dtype=np.float32)` uses 4 bytes per number instead of 8, which halves memory and storage with no meaningful accuracy loss.
 
 ### `HashEmbedder` (the "hashing trick")

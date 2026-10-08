@@ -76,15 +76,18 @@ class FastEmbedEmbedder:
         self.name = f"fastembed:{model_name}"
 
     def embed_documents(self, texts: list[str]) -> np.ndarray:
-        # `passage_embed` applies the model's recommended formatting for documents
-        # and yields one vector per text; list(...) collects them.
+        # `passage_embed` is FastEmbed's hook for documents (models that need a
+        # passage prefix get it here; bge-small-en-v1.5 adds none). It yields one
+        # vector per text; list(...) collects them.
         vectors = list(self._model.passage_embed(texts))
         # Stack into a float32 matrix (float32 halves memory vs float64) and normalise.
         return _normalize(np.asarray(vectors, dtype=np.float32))
 
     def embed_query(self, text: str) -> np.ndarray:
-        # `query_embed` adds the query instruction that BGE models were trained with
-        # ("Represent this sentence for searching relevant passages: ...").
+        # `query_embed` is FastEmbed's hook for queries. For bge-small-en-v1.5 it is a
+        # plain embed() call: BGE's optional query instruction ("Represent this
+        # sentence for searching relevant passages: ") is NOT added. Prepend it here
+        # yourself if a recall@k eval shows it helps.
         vector = next(iter(self._model.query_embed(text)))
         # Turn the vector into a 1-row matrix, normalise it, and return the single row.
         return _normalize(np.asarray(vector, dtype=np.float32)[None, :])[0]
